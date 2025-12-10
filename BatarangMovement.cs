@@ -2,7 +2,15 @@ using UnityEngine;
 
 public class BatarangMovement : MonoBehaviour
 {
-    public float speed = 10f;
+    public float baseSpeed = 8f;
+    public float speedBoostPerPolice = 1f;
+    float speed;
+
+    void Start()
+    {
+        GameObject[] police = GameObject.FindGameObjectsWithTag("Police");
+        speed = baseSpeed + (police.Length * speedBoostPerPolice);
+    }
 
     void Update()
     {
