@@ -36,7 +36,8 @@ public class PoliceMovement : MonoBehaviour
 
     void Update()
     {
-        transform.position += new Vector3(dir * speed * Time.deltaTime, 0, 0);
+        float speedMult = GameManager.Instance != null ? GameManager.Instance.PoliceSpeedMultiplier : 1f;
+        transform.position += new Vector3(dir * speed * speedMult * Time.deltaTime, 0, 0);
 
         if (transform.position.x > 8f) dir = -1f;
         if (transform.position.x < -8f) dir = 1f;

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using System.Collections;
 
 public class PlayerMovement : MonoBehaviour
@@ -22,6 +23,11 @@ public class PlayerMovement : MonoBehaviour
         originalScale = transform.localScale;
     }
 
+    bool IsPointerOverUI()
+    {
+        return EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+    }
+
     void Update()
     {
         moveX = Input.GetAxisRaw("Horizontal");
@@ -30,7 +36,8 @@ public class PlayerMovement : MonoBehaviour
         if (moveX > 0) sr.flipX = false;
         else if (moveX < 0) sr.flipX = true;
 
-        if ((Input.GetButtonDown("Fire1") || Input.GetKeyDown(KeyCode.Space)) && Time.time >= nextThrowTime)
+        bool canShoot = Time.time >= nextThrowTime && !IsPointerOverUI();
+        if ((Input.GetButtonDown("Fire1") || Input.GetKeyDown(KeyCode.Space)) && canShoot)
         {
             Instantiate(pinPrefab, transform.position, Quaternion.identity);
             StartCoroutine(ThrowAnimation());

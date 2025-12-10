@@ -40,6 +40,9 @@ public class JokerMovement : MonoBehaviour
             }
             policeOfficers.Clear();
             usedYPositions = new List<float> { -5f, -3f, -1f };
+            
+            if (GameData.Instance != null)
+                GameData.Instance.StartNewGame();
         }
     }
 
@@ -101,7 +104,8 @@ public class JokerMovement : MonoBehaviour
     {
         if (isPopping) return;
 
-        transform.Translate(dir * speed * Time.deltaTime);
+        float speedMult = GameManager.Instance != null ? GameManager.Instance.EnemySpeedMultiplier : 1f;
+        transform.Translate(dir * speed * speedMult * Time.deltaTime);
 
         if (transform.position.x > 8f) dir = Vector2.left;
         if (transform.position.x < -8f) dir = Vector2.right;
@@ -111,8 +115,9 @@ public class JokerMovement : MonoBehaviour
     {
         if (isPopping) return;
 
+        float growMult = GameManager.Instance != null ? GameManager.Instance.GrowthMultiplier : 1f;
         if (transform.localScale.x < maxSize)
-            transform.localScale += Vector3.one * growAmount;
+            transform.localScale += Vector3.one * growAmount * growMult;
         else
             Respawn(false);
     }
@@ -126,6 +131,12 @@ public class JokerMovement : MonoBehaviour
         int gained = Mathf.RoundToInt(size * 2);
         score += gained;
         scoreText.text = score.ToString();
+        
+        if (GameData.Instance != null)
+        {
+            GameData.Instance.AddScore(gained);
+            GameData.Instance.AddJokerPopped();
+        }
 
         int expectedPolice = 1 + (score / pointsPerPolice);
         while (policeCount < expectedPolice && policeCount < maxPolice)
